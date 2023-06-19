@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas width="575" height="390" style="background: green" id="field">
+            <script>
+                var scale = 5;
+                var canvas, ctx, w = 105 * scale, h = 68 * scale, border = 5 * scale;
+                var sm_gate_border_w = 5.5 * scale, sm_gate_border_h = 12.82 * scale,
+                    b_gate_border_w = 16.5 * scale, b_gate_border_h = 34.82 * scale,
+                    center_circle_rad = 9.15 * scale, dot_rad = 0.4 * scale,
+                    gate_sector_rad = 7 * scale, corner_circle_rad = 2 * scale, pen_w_left = 11 * scale;
+                function init() {
+                    canvas = document.getElementById("field");
+                    ctx = canvas.getContext('2d');
+                    ctx.width = w;
+                    ctx.height = h;
+                    ctx.fillStyle = "white";
+                    ctx.strokeStyle = "white";
+                }
+                init();
+                function draw_circle(x, y, rad, st_angle, end_angle, inv, fill=false){
+                    ctx.beginPath();
+                        ctx.arc(x, y, rad, st_angle, end_angle, inv);
+                        if(fill){
+                            ctx.fill();
+                        }
+                        else
+                        {
+                            ctx.stroke();
+                        }
+                    ctx.closePath();
+                }
+                function draw_rect(x, y, weight, height){
+                    ctx.rect(x, y, weight, height);
+                    ctx.stroke();
+                }
+                ctx.beginPath();
+                    draw_rect(border, border, w, h);
+                    draw_rect(border, (h + border * 2) / 2 - sm_gate_border_h / 2, sm_gate_border_w, sm_gate_border_h);
+                    draw_rect(w + border - sm_gate_border_w, (h + border * 2) / 2 - sm_gate_border_h / 2, sm_gate_border_w, sm_gate_border_h);
+                    draw_rect(border, (h + border * 2) / 2 - b_gate_border_h / 2, b_gate_border_w, b_gate_border_h);
+                    draw_rect(w + border - b_gate_border_w, (h + border * 2) / 2 - b_gate_border_h / 2, b_gate_border_w, b_gate_border_h);
+                ctx.closePath();
+                draw_circle((w + border * 2) / 2, (h + border * 2) / 2, center_circle_rad, 0, 2 * Math.PI * 2, true);
+                draw_circle(border, border, corner_circle_rad, 0, 0.5 * Math.PI, false);
+                draw_circle(border, h + border, corner_circle_rad, -0.5 * Math.PI, 0, false);
+                draw_circle(w + border, h + border, corner_circle_rad, -1 * Math.PI, -0.5 * Math.PI, false);
+                draw_circle(w + border, border, corner_circle_rad, -1 * Math.PI, -1.5 * Math.PI, true);
+                draw_circle(border + pen_w_left, (h + border * 2) / 2, dot_rad, 0, 2 * Math.PI, false, true);
+                draw_circle(w - pen_w_left + border, (h + border * 2) / 2, dot_rad, 0, 2 * Math.PI, false, true);
+                draw_circle((w + border * 2) / 2, (h + border * 2) / 2, dot_rad, 0, 2 * Math.PI, false, true);
+                draw_circle(border + pen_w_left, (h + border * 2) / 2, gate_sector_rad, 0.667, Math.PI * 2 - 0.667, true);
+                draw_circle(w - pen_w_left + border, (h + border * 2) / 2, gate_sector_rad, Math.PI - 0.667, Math.PI + 0.667, false);
+                ctx.beginPath();
+                    ctx.moveTo((w + border * 2) / 2, border);
+                    ctx.lineTo((w + border * 2) / 2, h + border);
+                    ctx.stroke();
+                ctx.closePath();
+                var arc = {
+                    rad: 10,
+                    x: (w + border * 2) / 2 + 50,
+                    y: (h + border * 2) / 2 + 50,
+                }
+                draw_circle(arc.x, arc.y, arc.rad, 0, 2 * Math.PI, false, true);
+                function getMousePos(canvas, event){
+                    var rect = canvas.getBoundingClientRect();
+
+                    return {x: event.clientX - rect.left, y: event.clientY - rect.top,};
+                }
+                function isInside(pos, arc){
+                    return Math.sqrt(Math.abs(pos.x - arc.x) * Math.abs(pos.x - arc.x) +
+                        Math.abs(pos.y - arc.y) * Math.abs(pos.y - arc.y)) < arc.rad;
+                }
+
+                canvas.addEventListener("click", function(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    if(isInside(mousePos, arc)){
+                        alert("дороу")
+                    }
+                });
+
+            </script>
+    </canvas>
+</body>
+</html>
